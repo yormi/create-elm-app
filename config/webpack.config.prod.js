@@ -3,7 +3,7 @@
 const autoprefixer = require('autoprefixer');
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin');
 const DefinePlugin = require('webpack/lib/DefinePlugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const AssetsPlugin = require('assets-webpack-plugin');
@@ -93,42 +93,42 @@ module.exports = {
     noParse: /\.elm$/,
 
     rules: [
-      {
-        test: /\.js$/,
-        exclude: [/elm-stuff/, /node_modules/],
-        loader: require.resolve('babel-loader'),
-        query: {
-          // Latest stable ECMAScript features
-          presets: [
-            [
-              require.resolve('babel-preset-env'),
-              {
-                targets: {
-                  // React parses on ie 9, so we should too
-                  ie: 9,
-                  // We currently minify with uglify
-                  // Remove after https://github.com/mishoo/UglifyJS2/issues/448
-                  uglify: true
-                },
-                // Disable polyfill transforms
-                useBuiltIns: false,
-                // Do not transform modules to CJS
-                modules: false
-              }
-            ]
-          ],
-          plugins: [
-            [
-              require.resolve('babel-plugin-transform-runtime'),
-              {
-                helpers: false,
-                polyfill: false,
-                regenerator: true
-              }
-            ]
-          ]
-        }
-      },
+      // {
+      //   test: /\.js$/,
+      //   exclude: [/elm-stuff/, /node_modules/],
+      //   loader: require.resolve('babel-loader'),
+      //   query: {
+      //     // Latest stable ECMAScript features
+      //     presets: [
+      //       [
+      //         require.resolve('babel-preset-env'),
+      //         {
+      //           targets: {
+      //             // React parses on ie 9, so we should too
+      //             ie: 9,
+      //             // We currently minify with uglify
+      //             // Remove after https://github.com/mishoo/UglifyJS2/issues/448
+      //             uglify: true
+      //           },
+      //           // Disable polyfill transforms
+      //           useBuiltIns: false,
+      //           // Do not transform modules to CJS
+      //           modules: false
+      //         }
+      //       ]
+      //     ],
+      //     plugins: [
+      //       [
+      //         require.resolve('babel-plugin-transform-runtime'),
+      //         {
+      //           helpers: false,
+      //           polyfill: false,
+      //           regenerator: true
+      //         }
+      //       ]
+      //     ]
+      //   }
+      // },
 
       {
         test: /\.elm$/,
