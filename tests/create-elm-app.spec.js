@@ -1,4 +1,3 @@
-/* eslint-env mocha */
 const path = require('path');
 const expect = require('unexpected');
 const spawn = require('cross-spawn');
@@ -21,12 +20,8 @@ describe('Create Elm application with `create-elm-app` command', () => {
     expect(status, 'to be', 0);
   }).timeout(60 * 1000);
 
-  it(`'${testAppName}' should have elm-package.json file`, () => {
-    expect(
-      fs.existsSync(path.join(testAppDir, 'elm-package.json')),
-      'to be',
-      true
-    );
+  it(`'${testAppName}' should have elm.json file`, () => {
+    expect(fs.existsSync(path.join(testAppDir, 'elm.json')), 'to be', true);
   });
 
   it(`'${testAppName}' should have .gitignore file`, () => {
@@ -36,7 +31,7 @@ describe('Create Elm application with `create-elm-app` command', () => {
   it(`'${testAppName}' should have the same file structure as template`, () => {
     const templateDir = path.join(rootDir, 'template');
     const options = {
-      excludeFilter: 'elm-stuff, elm-package.json, gitignore, .gitignore'
+      excludeFilter: 'elm-stuff, elm.json, gitignore, .gitignore, build'
     };
     const { same } = dircompare.compareSync(templateDir, testAppDir, options);
     expect(same, 'to be', true);

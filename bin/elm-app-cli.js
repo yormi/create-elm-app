@@ -5,11 +5,22 @@
 const path = require('path');
 const spawn = require('cross-spawn');
 const argv = require('minimist')(process.argv.slice(2));
-const executablePaths = require('elm/platform').executablePaths;
+const elmExecutable = require.resolve('elm/bin/elm');
 const version = require('../package.json').version;
-const elmPlatformVersion = require('elm/package.json').version;
+const elmVersion = require('elm/package.json').version;
 
 const commands = argv._;
+
+const elmCommands = [
+  'repl',
+  'init',
+  'reactor',
+  'make',
+  'install',
+  'bump',
+  'diff',
+  'publish'
+];
 
 if (commands.length === 0) {
   help(version);
@@ -35,10 +46,7 @@ switch (script) {
       }
     });
 
-    args = args.concat([
-      '--compiler',
-      path.normalize(executablePaths['elm-make'])
-    ]);
+    args = args.concat(['--compiler', elmExecutable]);
 
     const cp = spawn.sync(require.resolve('elm-test/bin/elm-test'), args, {
       stdio: 'inherit'
@@ -50,19 +58,10 @@ switch (script) {
 
     break;
   }
-  case 'install': {
-    const executable = executablePaths['elm-package'];
-    spawn.sync(path.normalize(executable), process.argv.slice(2), {
-      stdio: 'inherit'
-    });
-    break;
-  }
   default:
     // Proxy elm-platform cli commands.
-    if (['package', 'reactor', 'make', 'repl'].indexOf(script) !== -1) {
-      const executable = executablePaths['elm-' + script];
-
-      spawn.sync(path.normalize(executable), process.argv.slice(3), {
+    if (elmCommands.indexOf(script) !== -1) {
+      spawn.sync(elmExecutable, process.argv.slice(2), {
         stdio: 'inherit'
       });
       break;
@@ -79,12 +78,15 @@ switch (script) {
  * @return {undefined}
  */
 function help(version) {
-  console.log('\nUsage: elm-app <command>\n');
+  console.log();
+  console.log('Usage: elm-app <command>');
+  console.log();
   console.log('where <command> is one of:');
-  console.log(
-    '    create, build, start, install, test, eject, package, reactor, make, repl\n'
-  );
-  console.log('\nElm ' + elmPlatformVersion + '\n');
+  console.log('    build, start, test, eject, ' + elmCommands.join(', '));
+  console.log();
+  console.log();
+  console.log('Elm ' + elmVersion);
+  console.log();
   console.log(
     'create-elm-app@' + version + ' ' + path.resolve(__dirname, '..')
   );
@@ -94,7 +96,7 @@ function help(version) {
  * Spawn separate node process with specified script
  *
  * @param  {string} script Path to script
- * @param  {Arrays} args   Script arguments
+ * @param  {Array} args   Script arguments
  * @return {undefined}
  */
 function spawnSyncNode(script, args) {
